@@ -2,6 +2,7 @@
 import { Box, VStack, Image, Input, Button, Text, Link } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import axios from 'axios';
 
 const AuthForm = () => {
   const navigate = useNavigate();
@@ -16,27 +17,16 @@ const AuthForm = () => {
       return;
     }
 
+    console.log("Login inputs", inputs);
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Login successful', data);
+      const response = await axios.post('http://localhost:3000/auth/login', inputs);
+      if (response.status === 200) {
+        console.log("Login successful:", response.data);
         navigate("/");
-      } else {
-        console.error('Login failed', data);
-        alert(data.message || 'Login failed');
       }
     } catch (error) {
-      console.error('An error occurred', error);
-      alert('An error occurred while logging in');
+      console.error("Error during login:", error);
+      alert("Login failed. Please try again.");
     }
   };
 
