@@ -10,16 +10,34 @@ const AuthForm = () => {
     password: '',
   });
 
-  const handleAuth = () => {
+  const handleAuth = async () => {
     if (!inputs.email || !inputs.password) {
       alert("Please fill in all required fields.");
       return;
     }
 
-    console.log("inputs", inputs);
-    // Handle authentication here
+    try {
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inputs),
+      });
 
-    navigate("/");
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Login successful', data);
+        navigate("/");
+      } else {
+        console.error('Login failed', data);
+        alert(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('An error occurred', error);
+      alert('An error occurred while logging in');
+    }
   };
 
   const handleChange = (e) => {
