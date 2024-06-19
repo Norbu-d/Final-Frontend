@@ -23,7 +23,7 @@ const SignupForm = () => {
       const response = await axios.post('http://localhost:3001/signup', inputs);
       if (response.status === 200) {
         console.log("Signup successful:", response.data);
-        navigate("/auth");
+        navigate("/");
       }
     } catch (error) {
       console.error("Error during signup:", error);

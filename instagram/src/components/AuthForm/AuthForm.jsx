@@ -22,7 +22,7 @@ const AuthForm = () => {
       const response = await axios.post('http://localhost:3000/auth/login', inputs);
       if (response.status === 200) {
         console.log("Login successful:", response.data);
-        navigate("/");
+        navigate("/home");
       }
     } catch (error) {
       console.error("Error during login:", error);
