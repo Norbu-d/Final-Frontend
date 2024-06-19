@@ -78,7 +78,7 @@ const NavBar = ({ onUpload }) => {
   };
 
   const iconData = [
-    { icon: faHome, name: 'Home', action: () => navigate('/') },
+    { icon: faHome, name: 'Home', action: () => navigate('/home') },
     { icon: faSearch, name: 'Search', action: handleSearchClick },
     { icon: faCompass, name: 'Explore' },
     { icon: faFilm, name: 'Reels' },

@@ -86,7 +86,7 @@ const SignupForm = () => {
         <Box textAlign="center">
           <Text fontSize={14}>
             Already have an account?{" "}
-            <Link color="blue.500" onClick={() => navigate("/auth")}>
+            <Link color="blue.500" onClick={() => navigate("/")}>
               Log in
             </Link>
           </Text>
