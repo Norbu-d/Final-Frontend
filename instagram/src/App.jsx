@@ -4,7 +4,7 @@ import Signuppage from './pages/signuppage';
 import ProfilePage from './pages/profilepage';
 import Homepage from '../../Homepage';
 import PublicPage from './pages/PublicPage';
-import Messages from './pages/Messages';
+import Messages from '../../Messages';
 
 
 
