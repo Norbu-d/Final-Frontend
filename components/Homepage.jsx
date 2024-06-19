@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import NavBar from './NavBar';
 import Post from './Post';
 import { Box, Flex } from '@chakra-ui/react';

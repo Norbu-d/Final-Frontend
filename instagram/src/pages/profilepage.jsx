@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // Assuming you're using React Router for routing
 import { Box, Image, Text, Stack, Avatar, Grid, Button, Icon } from '@chakra-ui/react';
 import { FaCog } from 'react-icons/fa';
-import NavBar from '../../../NavBar';
+import NavBar from '../../../components/NavBar';
 
 const ProfilePage = () => {
   const { username } = useParams(); // Get the username parameter from the URL

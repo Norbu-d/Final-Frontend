@@ -2,9 +2,9 @@ import { Route, Routes } from 'react-router-dom';
 import Authpage from './pages/Homepage/Authpage/Authpage';
 import Signuppage from './pages/signuppage';
 import ProfilePage from './pages/profilepage';
-import Homepage from '../../Homepage';
+import Homepage from '../../components/Homepage';
 import PublicPage from './pages/PublicPage';
-import Messages from './pages/Messages';
+import Messages from '../../components/Messages';
 
 
 
