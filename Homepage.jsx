@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import NavBar from './NavBar';
 import Post from './Post';
+import { Box, Flex } from '@chakra-ui/react';
 
 const Homepage = () => {
   const [posts, setPosts] = useState([
     {
       id: 1,
       user: {
-        username: 'johndoe',
+        username: 'Dorji',
         avatar: 'https://via.placeholder.com/150',
       },
       imageUrls: ['https://via.placeholder.com/600'],
@@ -21,7 +22,12 @@ const Homepage = () => {
   ]);
 
   const handleUpload = (imageFiles) => {
-    const imageUrls = imageFiles.map(file => URL.createObjectURL(file));
+    const imageUrls = imageFiles.map(file => {
+      const url = URL.createObjectURL(file);
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      return url;
+    });
+
     const newPost = {
       id: posts.length + 1,
       user: {
@@ -33,20 +39,21 @@ const Homepage = () => {
       comments: [],
       timestamp: new Date(),
     };
+
     setPosts([newPost, ...posts]);
   };
 
   return (
-    <div className="App">
+    <Box className="Homepage">
       <NavBar onUpload={handleUpload} />
-      <div className="flex justify-center mt-16">
-        <div className="w-full max-w-xl">
+      <Flex justifyContent="center" mt="16" p="4">
+        <Box w="full" maxW="xl">
           {posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 

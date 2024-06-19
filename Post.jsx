@@ -1,6 +1,7 @@
-import  { useState } from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faShare } from '@fortawesome/free-solid-svg-icons';
+import { Box, Button, Image as ChakraImage, Input, Flex, Text } from '@chakra-ui/react';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
@@ -43,66 +44,66 @@ const Post = ({ post }) => {
   };
 
   return (
-    <div className="post bg-black text-white mb-5">
-      <div className="flex items-center p-4">
-        <img src={post.user.profilePic} alt="profile" className="w-10 h-10 rounded-full mr-4" />
-        <div>
-          <span className="font-bold">{post.user.username}</span>
-          <div className="text-gray-500 text-sm">{new Date(post.timestamp).toLocaleString()}</div>
-        </div>
-      </div>
+    <Box bg="black" color="white" mb={5} borderRadius="md" overflow="hidden">
+      <Flex alignItems="center" p={4}>
+        <ChakraImage src={post.user.profilePic} alt="profile" boxSize="10" rounded="full" mr={4} />
+        <Box>
+          <Text fontWeight="bold">{post.user.username}</Text>
+          <Text color="gray.500" fontSize="sm">{new Date(post.timestamp).toLocaleString()}</Text>
+        </Box>
+      </Flex>
       <Carousel showThumbs={false} showStatus={false} infiniteLoop dynamicHeight>
         {post.imageUrls.map((imageUrl, index) => (
           <div key={index}>
-            <img src={imageUrl} alt={`Post ${index}`} className="w-600 h-600 object-cover" />
+            <ChakraImage src={imageUrl} alt={`Post ${index}`} w="full" h="600px" objectFit="cover" />
           </div>
         ))}
       </Carousel>
-      <div className="p-4 flex items-center justify-between">
-      
-      ..  <div className="flex items-center">
-          <button onClick={handleLike} className="mr-4 focus:outline-none">
-            <FontAwesomeIcon icon={faHeart} size="lg" className={liked ? "text-red-500" : "text-white"} />
-          </button>
-          <button onClick={toggleCommentInput} className="mr-4 focus:outline-none">
-            <FontAwesomeIcon icon={faComment} size="lg" className="text-white" />
-          </button>
-          <button className="mr-4 focus:outline-none">
-            <FontAwesomeIcon icon={faShare} size="lg" className="text-white" />
-          </button>
-        </div>
-        <div className="flex items-center">
-          <button className="text-white focus:outline-none">Save</button>
-        </div>
-      </div>
+      <Flex justifyContent="space-between" alignItems="center" p={4}>
+        <Flex alignItems="center">
+          <Button onClick={handleLike} mr={2} variant="unstyled">
+            <FontAwesomeIcon icon={faHeart} size="lg" color={liked ? "red" : "white"} />
+          </Button>
+          <Button onClick={toggleCommentInput} mr={2} variant="unstyled">
+            <FontAwesomeIcon icon={faComment} size="lg" color="white" />
+          </Button>
+          <Button variant="unstyled">
+            <FontAwesomeIcon icon={faShare} size="lg" color="white" />
+          </Button>
+        </Flex>
+      </Flex>
       {showCommentInput && (
-        <div className="flex items-center border-t border-gray-700 p-4">
-          <input
+        <Flex alignItems="center" borderTop="1px" borderColor="gray.700" p={4}>
+          <Input
             type="text"
             placeholder="Add a comment..."
             value={commentText}
             onChange={handleCommentChange}
-            className="flex-grow p-2 bg-black text-white border-none focus:outline-none"
+            bg="black"
+            textColor="white"
+            border="none"
+            focusBorderColor="none"
+            flex="1"
           />
-          <button onClick={handlePostComment} className="text-blue-500 font-semibold px-3 focus:outline-none">Post</button>
-        </div>
+          <Button onClick={handlePostComment} colorScheme="blue" fontWeight="semibold" px={3} ml={2}>Post</Button>
+        </Flex>
       )}
-      <div className="px-4 pb-2">{liked ? post.likes + 1 : post.likes} likes</div>
-      <div className="px-4 pb-4">
+      <Box px={4} pb={2}>{liked ? post.likes + 1 : post.likes} likes</Box>
+      <Box px={4} pb={4}>
         {comments.map((comment, index) => (
-          <div key={index} className="flex items-center mb-1">
-            <div className="flex flex-col">
-              <span className="font-bold mr-2">{comment.username}</span>
-              <span className="text-gray-500 text-sm">{new Date(comment.timestamp).toLocaleString()}</span>
-            </div>
-            <span>{comment.text}</span>
-          </div>
+          <Flex key={index} alignItems="center" mb={1}>
+            <Box flex="1">
+              <Text fontWeight="bold" mr={2}>{comment.username}</Text>
+              <Text color="gray.500" fontSize="sm">{new Date(comment.timestamp).toLocaleString()}</Text>
+            </Box>
+            <Text>{comment.text}</Text>
+          </Flex>
         ))}
-      </div>
-      <div className="px-4 pb-4">
-        <span className="font-bold mr-2">{post.user.username}</span>{post.caption}
-      </div>
-    </div>
+      </Box>
+      <Box px={4} pb={4}>
+        <Text fontWeight="bold" mr={2}>{post.user.username}</Text>{post.caption}
+      </Box>
+    </Box>
   );
 };
 

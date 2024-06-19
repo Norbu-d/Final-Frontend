@@ -1,47 +1,45 @@
-// NavBar.js
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome, faSearch, faCompass, faFilm, faCommentDots, faHeart, faPlusSquare, faUser, faBars,
 } from '@fortawesome/free-solid-svg-icons';
-import { Box, Button, Input, VStack } from '@chakra-ui/react';
-import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import {
+  Box, Button, Input, VStack, Image, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Spinner, useDisclosure,
+} from '@chakra-ui/react';
 
 const NavBar = ({ onUpload }) => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeItem, setActiveItem] = useState('Home');
   const searchInputRef = useRef(null);
-  const navigate = useNavigate(); // Use the useNavigate hook
+  const uploadInputRef = useRef(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
     const newSelectedImages = [...selectedImages, ...files];
     setSelectedImages(newSelectedImages);
 
-    const newPreviews = files.map(file => URL.createObjectURL(file));
-    setPreviews(prevPreviews => [...prevPreviews, ...newPreviews]);
-    setShowModal(true);
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+    onOpen();
   };
 
   const handleUpload = async () => {
     if (selectedImages.length > 0) {
       setUploading(true);
       try {
-        console.log('Uploading images:', selectedImages);
         await onUpload(selectedImages);
-        console.log('Upload successful');
       } catch (error) {
-        console.error("Error uploading images:", error);
+        console.error('Error uploading images:', error);
       } finally {
         setSelectedImages([]);
         setPreviews([]);
         setUploading(false);
-        setShowModal(false);
+        onClose();
       }
     }
   };
@@ -49,7 +47,7 @@ const NavBar = ({ onUpload }) => {
   const closeModal = () => {
     setSelectedImages([]);
     setPreviews([]);
-    setShowModal(false);
+    onClose();
   };
 
   const handleSearchClick = () => {
@@ -77,30 +75,15 @@ const NavBar = ({ onUpload }) => {
     setShowSearch(false);
   };
 
-  const handleCreateClick = () => {
-    if (!showModal) {
-      setShowModal(true);
-      document.getElementById('upload-input').click();
-    }
-  };
-
-  const handleHomeClick = () => {
-    navigate('/'); // Navigate to the home page
-  };
-
-  const handleProfileClick = () => {
-    navigate('/profile'); // Navigate to the profile page
-  };
-
   const iconData = [
-    { icon: faHome, name: 'Home', action: handleHomeClick },
+    { icon: faHome, name: 'Home' },
     { icon: faSearch, name: 'Search', action: handleSearchClick },
     { icon: faCompass, name: 'Explore' },
     { icon: faFilm, name: 'Reels' },
     { icon: faCommentDots, name: 'Messages' },
     { icon: faHeart, name: 'Notifications' },
-    { icon: faPlusSquare, name: 'Create', action: handleCreateClick },
-    { icon: faUser, name: 'Profile', action: handleProfileClick }, // Add action for profile button
+    { icon: faPlusSquare, name: 'Create', upload: true },
+    { icon: faUser, name: 'Profile' },
     { icon: faBars, name: 'More' },
   ];
 
@@ -122,9 +105,9 @@ const NavBar = ({ onUpload }) => {
         transition="all 0.3s"
       >
         <Box mb={4}>
-          <img src="/logo.png" alt="Instagram" className="h-10" />
+          <Image src="logo.png" alt="Instagram" h={10} />
         </Box>
-        <VStack spacing={2} mt={6} align="flex-start" flex="1">
+        <VStack spacing={2} mt={6} align="flex-start" flex="1" width="100%">
           {iconData.map((item, index) => (
             <Button
               key={index}
@@ -133,9 +116,17 @@ const NavBar = ({ onUpload }) => {
               _hover={{ bg: 'whiteAlpha.300' }}
               color="whiteAlpha.800"
               fontSize="sm"
-              onClick={item.action}
+              onClick={() => {
+                setActiveItem(item.name);
+                if (item.upload) {
+                  uploadInputRef.current.click();
+                } else {
+                  item.action && item.action();
+                }
+              }}
               w="100%"
               justifyContent="flex-start"
+              bg={activeItem === item.name ? 'gray.700' : 'transparent'}
             >
               {item.name === 'Search' && showSearch ? (
                 <Input
@@ -144,67 +135,59 @@ const NavBar = ({ onUpload }) => {
                   onChange={handleSearchChange}
                   onKeyDown={handleSearchKeyDown}
                   placeholder="Search..."
-                  className="p-2 bg-gray-800 text-white rounded focus:outline-none w-full"
+                  bg="gray.800"
+                  textColor="white"
+                  rounded="md"
+                  w="full"
                   ref={searchInputRef}
                 />
-              ) : item.name === 'Create' ? (
-                'Create'
               ) : (
                 item.name
               )}
-              {item.name === 'Create' && showModal && (
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="upload-input"
-                />
-              )}
             </Button>
           ))}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            ref={uploadInputRef}
+            style={{ display: 'none' }}
+          />
         </VStack>
       </Box>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-20">
-          <div className="bg-white p-4 rounded-lg w-2/3 max-w-lg">
-            <h2 className="text-lg mb-2">Preview Images</h2>
-            <div className="preview-container grid grid-cols-3 gap-2">
+      <Modal isOpen={isOpen} onClose={closeModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Preview Images</ModalHeader>
+          <ModalBody>
+            <Box className="preview-container" display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={4}>
               {previews.map((preview, index) => (
-                <img
+                <Image
                   key={index}
                   src={preview}
                   alt={`Preview ${index}`}
-                  className="preview-image max-w-full h-auto object-cover"
+                  className="preview-image"
+                  maxW="full"
+                  maxH="40"
+                  objectFit="cover"
                 />
               ))}
-            </div>
-            <div className="flex justify-between mt-2">
-              <Button
-                onClick={closeModal}
-                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 text-sm"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleUpload}
-                className={`bg-blue-500 text-white py-2 px-4 rounded ${uploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'} text-sm`}
-                disabled={uploading}
-              >
-                {uploading ? 'Uploading...' : 'Upload'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={closeModal} colorScheme="red" mr={3}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpload} colorScheme="blue" isLoading={uploading}>
+              {uploading ? <Spinner size="sm" /> : 'Upload'}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
-};
-
-NavBar.propTypes = {
-  onUpload: PropTypes.func.isRequired,
 };
 
 export default NavBar;
