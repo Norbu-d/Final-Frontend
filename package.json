@@ -7,7 +7,8 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "axios": "^1.7.2",
     "framer-motion": "^11.2.10",
-    "react-responsive-carousel": "^3.2.23"
+    "react-responsive-carousel": "^3.2.23",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

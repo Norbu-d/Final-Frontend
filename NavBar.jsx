@@ -4,8 +4,9 @@ import {
   faHome, faSearch, faCompass, faFilm, faCommentDots, faHeart, faPlusSquare, faUser, faBars,
 } from '@fortawesome/free-solid-svg-icons';
 import {
-  Box, Button, Input, VStack, Image, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Spinner, useDisclosure,
+  Box, Button, Input, VStack, Image, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Spinner, useDisclosure, HStack,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const NavBar = ({ onUpload }) => {
   const [selectedImages, setSelectedImages] = useState([]);
@@ -17,6 +18,7 @@ const NavBar = ({ onUpload }) => {
   const searchInputRef = useRef(null);
   const uploadInputRef = useRef(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
@@ -76,14 +78,14 @@ const NavBar = ({ onUpload }) => {
   };
 
   const iconData = [
-    { icon: faHome, name: 'Home' },
+    { icon: faHome, name: 'Home', action: () => navigate('/') },
     { icon: faSearch, name: 'Search', action: handleSearchClick },
     { icon: faCompass, name: 'Explore' },
     { icon: faFilm, name: 'Reels' },
-    { icon: faCommentDots, name: 'Messages' },
+    { icon: faCommentDots, name: 'Messages', action: () => navigate('/messages') },
     { icon: faHeart, name: 'Notifications' },
     { icon: faPlusSquare, name: 'Create', upload: true },
-    { icon: faUser, name: 'Profile' },
+    { icon: faUser, name: 'Profile', action: () => navigate('/profile') },
     { icon: faBars, name: 'More' },
   ];
 
@@ -105,7 +107,7 @@ const NavBar = ({ onUpload }) => {
         transition="all 0.3s"
       >
         <Box mb={4}>
-          <Image src="logo.png" alt="Instagram" h={10} />
+          <Image src="logo.png" alt="Instagram" className="h-10" />
         </Box>
         <VStack spacing={2} mt={6} align="flex-start" flex="1" width="100%">
           {iconData.map((item, index) => (
@@ -135,10 +137,7 @@ const NavBar = ({ onUpload }) => {
                   onChange={handleSearchChange}
                   onKeyDown={handleSearchKeyDown}
                   placeholder="Search..."
-                  bg="gray.800"
-                  textColor="white"
-                  rounded="md"
-                  w="full"
+                  className="p-2 bg-gray-800 text-white rounded focus:outline-none w-full"
                   ref={searchInputRef}
                 />
               ) : (
@@ -162,19 +161,16 @@ const NavBar = ({ onUpload }) => {
         <ModalContent>
           <ModalHeader>Preview Images</ModalHeader>
           <ModalBody>
-            <Box className="preview-container" display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={4}>
+            <HStack wrap="wrap" spacing={4}>
               {previews.map((preview, index) => (
                 <Image
                   key={index}
                   src={preview}
                   alt={`Preview ${index}`}
-                  className="preview-image"
-                  maxW="full"
-                  maxH="40"
-                  objectFit="cover"
+                  className="preview-image max-w-full max-h-40 object-cover"
                 />
               ))}
-            </Box>
+            </HStack>
           </ModalBody>
           <ModalFooter>
             <Button onClick={closeModal} colorScheme="red" mr={3}>
