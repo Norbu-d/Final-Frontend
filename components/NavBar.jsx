@@ -1,4 +1,4 @@
-import  { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome, faSearch, faCompass, faFilm, faCommentDots, faHeart, faPlusSquare, faUser, faBars,
@@ -7,6 +7,7 @@ import {
   Box, Button, Input, VStack, Image, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Spinner, useDisclosure, HStack,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const NavBar = ({ onUpload }) => {
   const [selectedImages, setSelectedImages] = useState([]);
@@ -15,6 +16,8 @@ const NavBar = ({ onUpload }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeItem, setActiveItem] = useState('Home');
+  const [userProfile, setUserProfile] = useState(null); // New state for user profile
+
   const searchInputRef = useRef(null);
   const uploadInputRef = useRef(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -72,8 +75,23 @@ const NavBar = ({ onUpload }) => {
     }
   };
 
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/search/${searchQuery}`);
+      if (response.status === 200) {
+        setUserProfile(response.data);
+        console.log("User profile fetched successfully:", response.data);
+        navigate(`/profile/${searchQuery}`); // Redirect to the user profile page
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      alert("User not found. Please try again.");
+    }
+  };
+
   const performSearch = () => {
     console.log('Performing search for:', searchQuery);
+    handleSearch();
     setShowSearch(false);
   };
 

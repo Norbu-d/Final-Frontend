@@ -145,7 +145,7 @@ const Messages = () => {
         <ChatHistory users={users} onSelectUser={handleSelectUser} />
       </Box>
       <Box w="75%" display="flex" flexDirection="column">
-        {chatPartner && (
+        {chatPartner ? (
           <>
             <Flex justifyContent="space-between" alignItems="center" p="4" borderBottom="1px" borderColor="gray.700">
               <Flex alignItems="center">
@@ -154,6 +154,7 @@ const Messages = () => {
                   {chatPartner.name}
                 </Text>
               </Flex>
+              <Button onClick={() => setChatPartner(null)}>Back</Button>
             </Flex>
             <ScrollArea flex="1" p="4" overflowY="auto" bg="black">
               <ChatWindow messages={currentMessages} currentUser={currentUser} />
@@ -182,6 +183,10 @@ const Messages = () => {
               </Button>
             </Flex>
           </>
+        ) : (
+          <Flex justifyContent="center" alignItems="center" h="100%">
+            <Text fontSize="2xl">Select a user to start chatting</Text>
+          </Flex>
         )}
       </Box>
     </Flex>
