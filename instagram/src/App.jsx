@@ -12,7 +12,7 @@ function App() {
   return (
     <Routes>
       <Route path='/' element={<Authpage />} />
-      <Route path='/home' element={<Homepage />} />
+      <Route path='/home/:username' element={<Homepage />} />
       <Route path='/signup' element={<Signuppage />} />
       <Route path='/profile' element={<ProfilePage />} />
       <Route path='/public' element={<PublicPage />}/> 
