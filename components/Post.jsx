@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faShare } from '@fortawesome/free-solid-svg-icons';
 import { Box, Button, Image as ChakraImage, Input, Flex, Text } from '@chakra-ui/react';
@@ -9,10 +9,63 @@ const Post = ({ post }) => {
   const [liked, setLiked] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState(post.comments);
+  const [comments, setComments] = useState([]);
 
-  const handleLike = () => {
+  // Fetch comments from server when component mounts
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/Homepage/post/${post.id}/comments`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const commentsData = await response.json();
+        setComments(commentsData);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+
+    fetchComments();
+  }, [post.id]);
+
+  // Fetch like status from server when component mounts
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/Homepage/post/${post.id}/like-status`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const likeStatus = await response.json();
+        setLiked(likeStatus.liked);
+      } catch (error) {
+        console.error('Error fetching like status:', error);
+      }
+    };
+
+    fetchLikeStatus();
+  }, [post.id]);
+
+  const handleLike = async () => {
     setLiked(!liked);
+
+    try {
+      const response = await fetch(`http://localhost:3000/Homepage/post/${post.id}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ liked: !liked }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error updating like status:', error);
+      setLiked(!liked); // Revert like status if there's an error
+    }
   };
 
   const toggleCommentInput = () => {
