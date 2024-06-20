@@ -21,8 +21,12 @@ const AuthForm = () => {
     try {
       const response = await axios.post('http://localhost:3000/auth/login', inputs);
       if (response.status === 200) {
+        const { token, username } = response.data;
         console.log("Login successful:", response.data);
-        navigate("/home");
+        // Store the token in localStorage
+        localStorage.setItem('jwtToken', token);
+        // Redirect to /home/username
+        navigate(`/home/${username}`);
       }
     } catch (error) {
       console.error("Error during login:", error);

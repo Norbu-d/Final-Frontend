@@ -77,7 +77,7 @@ const NavBar = ({ onUpload }) => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/search/${searchQuery}`);
+      const response = await axios.get(`http://localhost:3000/NavBar/search/${searchQuery}`);
       if (response.status === 200) {
         setUserProfile(response.data);
         console.log("User profile fetched successfully:", response.data);
